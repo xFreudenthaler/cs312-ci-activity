@@ -33,7 +33,16 @@ jobs:
         run: flake8 .
 
       - name: Test
-        run: pytest -v
+        run: pytest -v --junitxml=pytest-report.xml
+
+      - name: Upload test report
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: pytest-report-${{ matrix.python-version }}
+          path: pytest-report.xml
+          retention-days: 7
+          if-no-files-found: error
   build:
     needs: quality
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
